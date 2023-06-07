@@ -1,0 +1,18 @@
+registry:
+  consul:
+    base: letsit
+    client: localhost:8872
+    server: localhost:8500
+
+db:
+  type: postgres
+  configKey: oye
+  showSql: true
+  oye:
+    uri: "host=47.94.172.122 user=dev password=dev.n0secret dbname=op-user"
+
+
+redis:
+  maxIdle: 3
+  idleTimeout: 240
+  server: 127.0.0.1:6379

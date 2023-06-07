@@ -1,0 +1,21 @@
+opu-api:
+  port: 8007
+  domain: letsit.vip
+  token:
+    name: ut
+    expire: 1555200
+    secret: 123
+
+opu-service:
+  db: local
+
+db:
+  local:
+    type: postgres
+    showSql: true
+    uri: "host=127.0.0.1 user=opu password=nosecret dbname=opu sslmode=disable"
+
+redis:
+  maxIdle: 3
+  idleTimeout: 240
+  server: 127.0.0.1:6379
