@@ -4,23 +4,23 @@ import (
 	"context"
 	"time"
 
-	"code.letsit.cn/go/common"
-	"code.letsit.cn/go/common/errors"
-	"code.letsit.cn/go/common/log"
-	"code.letsit.cn/go/op-user/model"
-	"code.letsit.cn/go/op-user/model/module"
+	"github.com/sdjnlh/communal"
+	"github.com/sdjnlh/communal/errors"
+	"github.com/sdjnlh/communal/log"
+	"github.com/sdjnlh/op-user/model"
+	"github.com/sdjnlh/op-user/model/module"
 	"go.uber.org/zap"
 )
 
 type RoleService struct {
-	*common.Module
+	*communal.Module
 }
 
 var Role = &RoleService{
 	Module: module.Role,
 }
 
-func (service *RoleService) Get(ctx context.Context, id *string, result *common.Result) (err error) {
+func (service *RoleService) Get(ctx context.Context, id *string, result *communal.Result) (err error) {
 	role := result.Data.(*model.RoleDTO)
 	_, err = service.Db.Where("id=?", *id).Get(role)
 	if role.Id == "" || err != nil {
@@ -32,7 +32,7 @@ func (service *RoleService) Get(ctx context.Context, id *string, result *common.
 	return
 }
 
-func (service *RoleService) Filter(ctx context.Context, filter *model.RoleFilter, result *common.FilterResult) (err error) {
+func (service *RoleService) Filter(ctx context.Context, filter *model.RoleFilter, result *communal.FilterResult) (err error) {
 	roles := result.Data.(*[]model.Role)
 	ss := service.Db.Where("dtd = false")
 	log.Logger.Debug("keyword text", zap.Any("Keywork text", filter.Keyword))
@@ -51,7 +51,7 @@ func (service *RoleService) Filter(ctx context.Context, filter *model.RoleFilter
 	return
 }
 
-func (service *RoleService) Insert(ctx context.Context, role *model.RoleDTO, result *common.Result) error {
+func (service *RoleService) Insert(ctx context.Context, role *model.RoleDTO, result *communal.Result) error {
 	// role.Id = role.Name
 	now := time.Now()
 	role.Crt = now
@@ -65,7 +65,7 @@ func (service *RoleService) Insert(ctx context.Context, role *model.RoleDTO, res
 	return nil
 }
 
-func (service *RoleService) Update(ctx context.Context, role *model.RoleDTO, result *common.Result) (err error) {
+func (service *RoleService) Update(ctx context.Context, role *model.RoleDTO, result *communal.Result) (err error) {
 	role.Lut = time.Now()
 	_, err = service.Db.Where("id=?", role.Id).Omit("crt").Update(role)
 	if err != nil {
@@ -75,7 +75,7 @@ func (service *RoleService) Update(ctx context.Context, role *model.RoleDTO, res
 	result.Ok = true
 	return nil
 }
-func (service *RoleService) Delete(ctx context.Context, id string, result *common.Result) error {
+func (service *RoleService) Delete(ctx context.Context, id string, result *communal.Result) error {
 	if id == "" {
 		result.Failure(errors.NotFound())
 		return nil

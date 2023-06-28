@@ -1,15 +1,15 @@
 package handler
 
 import (
-	"code.letsit.cn/go/common"
-	"code.letsit.cn/go/common/log"
-	"code.letsit.cn/go/common/rpc"
-	"code.letsit.cn/go/common/web"
-	"code.letsit.cn/go/op-user/model"
-	"code.letsit.cn/go/op-user/opu"
-	"code.letsit.cn/go/op-user/service"
 	"context"
 	"github.com/gin-gonic/gin"
+	"github.com/sdjnlh/communal"
+	"github.com/sdjnlh/communal/log"
+	"github.com/sdjnlh/communal/rpc"
+	"github.com/sdjnlh/communal/web"
+	"github.com/sdjnlh/op-user/model"
+	"github.com/sdjnlh/op-user/opu"
+	"github.com/sdjnlh/op-user/service"
 	"go.uber.org/zap"
 )
 
@@ -30,7 +30,7 @@ func (api *GroupAPI) Filter(c *gin.Context) {
 		api.BadRequestWithError(c, err)
 		return
 	}
-	result := &common.FilterResult{Result: common.Result{Data: &[]model.Group{}}}
+	result := &communal.FilterResult{Result: communal.Result{Data: &[]model.Group{}}}
 
 	if opu.Api.Rpc {
 		err = rpc.Call(context.Background(), "Group", "Filter", form, result)
@@ -53,7 +53,7 @@ func (api *GroupAPI) Get(c *gin.Context) {
 		return
 	}
 
-	result := &common.Result{Data: &model.Group{}}
+	result := &communal.Result{Data: &model.Group{}}
 	if opu.Api.Rpc {
 		err = rpc.Call(context.Background(), "Group", "Get", id, result)
 		log.Logger.Error("failed to call rpc", zap.Any("error", err))
@@ -74,7 +74,7 @@ func (api *GroupAPI) Insert(c *gin.Context) {
 		return
 	}
 
-	result := &common.Result{Data: &model.Group{}}
+	result := &communal.Result{Data: &model.Group{}}
 	if opu.Api.Rpc {
 		err = rpc.Call(context.Background(), "Group", "Insert", form, result)
 		log.Logger.Error("failed to call rpc", zap.Any("error", err))
@@ -96,7 +96,7 @@ func (api *GroupAPI) Update(c *gin.Context) {
 		return
 	}
 	log.Logger.Error("update group", zap.Any(" form:", form))
-	result := &common.Result{Data: &model.Group{}}
+	result := &communal.Result{Data: &model.Group{}}
 	if opu.Api.Rpc {
 		err = rpc.Call(context.Background(), "Group", "Update", form, result)
 		log.Logger.Error("failed to call rpc", zap.Any("error", err))
@@ -115,7 +115,7 @@ func (api *GroupAPI) Delete(c *gin.Context) {
 		return
 	}
 
-	result := &common.Result{Data: &model.Group{}}
+	result := &communal.Result{Data: &model.Group{}}
 	if opu.Api.Rpc {
 		err = rpc.Call(context.Background(), "Group", "Delete", id, result)
 		log.Logger.Error("failed to call rpc", zap.Any("error", err))

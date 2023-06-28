@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"code.letsit.cn/go/common"
-	"code.letsit.cn/go/common/web"
-	"code.letsit.cn/go/op-user/model"
-	"code.letsit.cn/go/op-user/service"
 	"github.com/gin-gonic/gin"
+	"github.com/sdjnlh/communal"
+	"github.com/sdjnlh/communal/web"
+	"github.com/sdjnlh/op-user/model"
+	"github.com/sdjnlh/op-user/service"
 )
 
 type sysLogAPI struct {
@@ -27,7 +27,7 @@ func (api *sysLogAPI) List(c *gin.Context) {
 		return
 	}
 
-	result := common.NewFilterResult(&[]model.SysLog{})
+	result := communal.NewFilterResult(&[]model.SysLog{})
 	err = service.SysLog.List(form, result)
 	if err != nil {
 		api.BadRequestWithError(c, err)

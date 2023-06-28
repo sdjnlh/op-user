@@ -10,17 +10,17 @@ import (
 	"strings"
 	"time"
 
-	"code.letsit.cn/go/op-user/model"
-	"code.letsit.cn/go/op-user/model/module"
+	"github.com/sdjnlh/op-user/model"
+	"github.com/sdjnlh/op-user/model/module"
 
-	"code.letsit.cn/go/common"
-	"code.letsit.cn/go/common/log"
+	"github.com/sdjnlh/communal"
+	"github.com/sdjnlh/communal/log"
 	"go.uber.org/zap"
 )
 
 // 服务模板
 type miniUserService struct {
-	*common.Module
+	*communal.Module
 }
 
 var MiniUser = &miniUserService{
@@ -152,7 +152,7 @@ func (service *miniUserService) Get(form *model.MiniUser) error {
 }
 
 // list 获取多个项目列表
-func (service *miniUserService) List(form *model.MiniUser, page *common.Page, list *[]model.MiniUser) error {
+func (service *miniUserService) List(form *model.MiniUser, page *communal.Page, list *[]model.MiniUser) error {
 	// 分页查询
 	sql := service.Db.NewSession()
 	defer sql.Commit()

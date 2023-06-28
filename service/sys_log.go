@@ -1,25 +1,25 @@
 package service
 
 import (
-	"code.letsit.cn/go/common"
-	"code.letsit.cn/go/common/errors"
-	"code.letsit.cn/go/common/log"
-	"code.letsit.cn/go/op-user/model"
-	"code.letsit.cn/go/op-user/model/module"
 	"context"
+	"github.com/sdjnlh/communal"
+	"github.com/sdjnlh/communal/errors"
+	"github.com/sdjnlh/communal/log"
+	"github.com/sdjnlh/op-user/model"
+	"github.com/sdjnlh/op-user/model/module"
 	"go.uber.org/zap"
 	"time"
 )
 
 type SysLogService struct {
-	*common.Module
+	*communal.Module
 }
 
 var SysLog = &SysLogService{
 	Module: module.SysLog,
 }
 
-func (service *SysLogService) List(filter *model.SysLogFilter, receiver *common.FilterResult) (err error) {
+func (service *SysLogService) List(filter *model.SysLogFilter, receiver *communal.FilterResult) (err error) {
 	ss := service.Db.Alias("l").Where("l.dtd=false").OrderBy("crt desc")
 	if filter.Username != "" {
 		ss.And("l.username like '%" + filter.Username + "' ")
@@ -40,7 +40,7 @@ func (service *SysLogService) List(filter *model.SysLogFilter, receiver *common.
 	return nil
 }
 
-func (service *SysLogService) Insert(ctx context.Context, form *model.SysLog, result *common.Result) (err error) {
+func (service *SysLogService) Insert(ctx context.Context, form *model.SysLog, result *communal.Result) (err error) {
 	if form.Id > 0 {
 		if _, err = service.Db.ID(form.GetId()).UseBool("check").Update(form); err != nil {
 			log.Logger.Error("fail to update item", zap.Error(err))
@@ -58,7 +58,7 @@ func (service *SysLogService) Insert(ctx context.Context, form *model.SysLog, re
 	result.Ok = true
 	return err
 }
-func (service *SysLogService) Delete(id int64, result *common.Result) error {
+func (service *SysLogService) Delete(id int64, result *communal.Result) error {
 	if id < 1 {
 		result.Failure(errors.NotFound())
 		return nil

@@ -1,7 +1,7 @@
 package model
 
 import (
-	"code.letsit.cn/go/common"
+	"github.com/sdjnlh/communal"
 	"strconv"
 )
 
@@ -14,18 +14,18 @@ const (
 
 type UserDTO struct {
 	User        `xorm:"extends"`
-	Permissions *common.StringArray `xorm:"-" json:"permissions,omitempty"`
-	Groups      *common.StringArray `xorm:"-" json:"groups,omitempty"`
-	Roles       *[]Role             `xorm:"-"`
-	Org         Org                 `xorm:"-"`
-	DefaultPath string              `xorm:"-"`
-	OrgName     string              `xorm:"-" form:"orgName" json:"orgName"`
+	Permissions *communal.StringArray `xorm:"-" json:"permissions,omitempty"`
+	Groups      *communal.StringArray `xorm:"-" json:"groups,omitempty"`
+	Roles       *[]Role               `xorm:"-"`
+	Org         Org                   `xorm:"-"`
+	DefaultPath string                `xorm:"-"`
+	OrgName     string                `xorm:"-" form:"orgName" json:"orgName"`
 }
 
 func (user *UserDTO) State() map[string]interface{} {
 	return map[string]interface{}{
-		common.UserIdKey:       strconv.FormatInt(user.Id, 10),
-		common.UserNicknameKey: user.Nickname,
+		communal.UserIdKey:       strconv.FormatInt(user.Id, 10),
+		communal.UserNicknameKey: user.Nickname,
 	}
 }
 
@@ -37,12 +37,12 @@ type UserFilter struct {
 	OrgId    int64  `form:"orgId,string" json:"orgId,string"`
 	Scope    string `form:"scope"`
 	ExistOrg bool   `form:"existOrg"`
-	common.Page
+	communal.Page
 }
 
 type RoleDTO struct {
 	Role `xorm:"extends"`
-	//RightIds common.StringArray `xorm:"-"`
+	//RightIds communal.StringArray `xorm:"-"`
 }
 
 type RestPassword struct {
@@ -52,23 +52,23 @@ type RestPassword struct {
 }
 
 type UserBase struct {
-	common.DBase `xorm:"extends"`
-	OrgId        int64  `json:"orgId,string"`
-	Username     string `json:"username" form:"username"`
-	Password     string `json:"password" form:"password"`
-	Nickname     string `json:"nickname" form:"nickname"`
-	Email        string `json:"email" form:"email"`
-	Mcc          string `json:"-" form:"mcc"`
-	Mobile       string `json:"mobile" form:"mobile"`
-	Type         string `json:"type" form:"type"`
+	communal.DBase `xorm:"extends"`
+	OrgId          int64  `json:"orgId,string"`
+	Username       string `json:"username" form:"username"`
+	Password       string `json:"password" form:"password"`
+	Nickname       string `json:"nickname" form:"nickname"`
+	Email          string `json:"email" form:"email"`
+	Mcc            string `json:"-" form:"mcc"`
+	Mobile         string `json:"mobile" form:"mobile"`
+	Type           string `json:"type" form:"type"`
 }
 type UUser struct {
 	UserBase `xorm:"extends"`
-	Roles    common.StringArray
+	Roles    communal.StringArray
 	AvatarId string `json:"-"`
 	Language int    `json:"-"`
 	Source   int    `json:"source"`
-	Ext      common.JsonMap
+	Ext      communal.JsonMap
 }
 
 func (user *UUser) TableName() string {
@@ -76,11 +76,11 @@ func (user *UUser) TableName() string {
 }
 
 type URole struct {
-	common.DBase `xorm:"extends"`
-	OrgId        int64  `form:"orgId,string" json:"orgId,string"`
-	Name         string `json:"name" form:"name"`
-	Permissions  common.StringArray
-	Description  string `json:"description" form:"description"`
+	communal.DBase `xorm:"extends"`
+	OrgId          int64  `form:"orgId,string" json:"orgId,string"`
+	Name           string `json:"name" form:"name"`
+	Permissions    communal.StringArray
+	Description    string `json:"description" form:"description"`
 }
 
 func (role *URole) TableName() string {
@@ -89,24 +89,24 @@ func (role *URole) TableName() string {
 
 type URoleFilter struct {
 	Keyword string `json:"k" form:"k"`
-	common.Page
+	communal.Page
 }
 type URoleDTO struct {
 	URole `xorm:"extends"`
-	//RightIds common.StringArray `xorm:"-"`
+	//RightIds communal.StringArray `xorm:"-"`
 }
 
 type UUserFilter struct {
 	Keyword string `json:"k" form:"k"`
-	common.Page
+	communal.Page
 }
 
 type UUserDTO struct {
 	UUser   `xorm:"extends"`
-	Rights  *common.StringArray `xorm:"-" json:"rights,omitempty"`
-	Groups  *common.StringArray `xorm:"-" json:"groups,omitempty"`
-	URoles  []URole             `xorm:"-"`
-	OrgName string              `json:"orgName" form:"orgName" xorm:"-"`
+	Rights  *communal.StringArray `xorm:"-" json:"rights,omitempty"`
+	Groups  *communal.StringArray `xorm:"-" json:"groups,omitempty"`
+	URoles  []URole               `xorm:"-"`
+	OrgName string                `json:"orgName" form:"orgName" xorm:"-"`
 }
 
 type ForgetForm struct {
@@ -117,7 +117,7 @@ type ForgetForm struct {
 type OrgFilter struct {
 	FullName string
 	Name     string
-	common.Page
+	communal.Page
 }
 type OrgDTO struct {
 	Org `xrom:"extends"`

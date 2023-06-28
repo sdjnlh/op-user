@@ -1,17 +1,17 @@
 package handler
 
 import (
-	"code.letsit.cn/go/common"
-	"code.letsit.cn/go/common/id"
-	"code.letsit.cn/go/common/web"
-	"code.letsit.cn/go/op-user/model"
-	"code.letsit.cn/go/op-user/service"
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/muesli/cache2go"
+	"github.com/sdjnlh/communal"
+	"github.com/sdjnlh/communal/id"
+	"github.com/sdjnlh/communal/web"
+	"github.com/sdjnlh/op-user/model"
+	"github.com/sdjnlh/op-user/service"
 	"io"
 	"os"
 	"strconv"
@@ -75,7 +75,7 @@ func (api *MiniUserApi) list(c *gin.Context) {
 	// 绑定表单属性和分页属性
 
 	form := &model.MiniUser{}
-	page := &common.Page{}
+	page := &communal.Page{}
 
 	list := &[]model.MiniUser{}
 	if err := c.Bind(page); err != nil {

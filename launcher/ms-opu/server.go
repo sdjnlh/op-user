@@ -1,9 +1,9 @@
 package main
 
 import (
-	"code.letsit.cn/go/common/app"
-	"code.letsit.cn/go/op-user/opu"
 	_ "github.com/lib/pq"
+	"github.com/sdjnlh/communal/app"
+	"github.com/sdjnlh/op-user/opu"
 )
 
 func main() {

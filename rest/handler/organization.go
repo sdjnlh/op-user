@@ -3,12 +3,12 @@ package handler
 import (
 	"context"
 
-	"code.letsit.cn/go/common"
-	"code.letsit.cn/go/common/log"
-	"code.letsit.cn/go/common/web"
-	"code.letsit.cn/go/op-user/model"
-	"code.letsit.cn/go/op-user/service"
 	"github.com/gin-gonic/gin"
+	"github.com/sdjnlh/communal"
+	"github.com/sdjnlh/communal/log"
+	"github.com/sdjnlh/communal/web"
+	"github.com/sdjnlh/op-user/model"
+	"github.com/sdjnlh/op-user/service"
 	"go.uber.org/zap"
 )
 
@@ -29,7 +29,7 @@ func (api *OrgAPI) Filter(c *gin.Context) {
 		api.BadRequestWithError(c, err)
 		return
 	}
-	result := &common.FilterResult{Result: common.Result{Data: &[]model.Org{}}}
+	result := &communal.FilterResult{Result: communal.Result{Data: &[]model.Org{}}}
 	err = service.Org.Filter(context.Background(), form, result)
 	log.Logger.Debug("list org", zap.Any("result", result))
 	api.ResultWithError(c, result, err)
@@ -44,7 +44,7 @@ func (api *OrgAPI) Get(c *gin.Context) {
 		return
 	}
 	var err error
-	result := &common.Result{Data: &model.Org{}}
+	result := &communal.Result{Data: &model.Org{}}
 	err = service.Org.Get(context.Background(), &id, result)
 	log.Logger.Debug("get role", zap.Any("result", result))
 	api.ResultWithError(c, result, err)
@@ -74,7 +74,7 @@ func (api *OrgAPI) Insert(c *gin.Context) {
 		api.BadRequestWithError(c, err)
 	}
 	form.ImageLogo = fileUrl
-	result := &common.Result{Data: &model.Org{}}
+	result := &communal.Result{Data: &model.Org{}}
 	err = service.Org.Insert(context.Background(), form, result)
 
 	log.Logger.Debug("create role", zap.Any("result", result))
@@ -92,7 +92,7 @@ func (api *OrgAPI) Update(c *gin.Context) {
 		return
 	}
 	log.Logger.Debug("update role", zap.Any(" form:", form))
-	result := &common.Result{Data: &model.Org{}}
+	result := &communal.Result{Data: &model.Org{}}
 	err = service.Org.Update(context.Background(), form, result)
 
 	log.Logger.Debug("update role", zap.Any("result", result))
@@ -103,7 +103,7 @@ func (api *OrgAPI) Delete(c *gin.Context) {
 	id := c.Param("id")
 
 	var err error
-	result := &common.Result{Data: &model.Org{}}
+	result := &communal.Result{Data: &model.Org{}}
 
 	err = service.Org.Delete(context.Background(), id, result)
 	if err != nil {

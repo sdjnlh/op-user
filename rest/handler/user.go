@@ -1,25 +1,19 @@
 package handler
 
 import (
-	"code.letsit.cn/go/common"
-	"code.letsit.cn/go/common/db"
-	"code.letsit.cn/go/common/errors"
-	"code.letsit.cn/go/common/log"
-	"code.letsit.cn/go/common/rpc"
-	"code.letsit.cn/go/common/web"
-	"code.letsit.cn/go/op-user/model"
-	"code.letsit.cn/go/op-user/opu"
-	"code.letsit.cn/go/op-user/service"
-	senderModel "code.letsit.cn/go/sender/model"
-	senderService "code.letsit.cn/go/sender/service"
+	"github.com/sdjnlh/communal"
+	"github.com/sdjnlh/communal/log"
+	"github.com/sdjnlh/communal/rpc"
+	"github.com/sdjnlh/communal/web"
+	"github.com/sdjnlh/op-user/model"
+	"github.com/sdjnlh/op-user/opu"
+	"github.com/sdjnlh/op-user/service"
+
 	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"math/rand"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type UserAPI struct {
@@ -41,7 +35,7 @@ func (api *UserAPI) Me(c *gin.Context) {
 	uid := api.UID(c)
 
 	dto := model.UserDTO{}
-	result := &common.Result{
+	result := &communal.Result{
 		Data: &dto,
 	}
 
@@ -62,7 +56,7 @@ func (api *UserAPI) Login(c *gin.Context) {
 	}
 
 	user := model.UserDTO{}
-	result := &common.Result{
+	result := &communal.Result{
 		Data: &user,
 	}
 
@@ -78,10 +72,10 @@ func (api *UserAPI) Login(c *gin.Context) {
 		api.ResultWithError(c, result, err)
 		return
 	}
-	c.SetCookie(common.UserIdKey, strconv.FormatInt(user.Id, 10), opu.Api.StateManager.MaxAge(), opu.Api.StateManager.Path(), opu.Api.StateManager.Domain(), false, false)
-	c.SetCookie(common.UserNicknameKey, user.Nickname, opu.Api.StateManager.MaxAge(), opu.Api.StateManager.Path(), opu.Api.StateManager.Domain(), false, false)
-	c.SetCookie(common.UserRoleKey, strings.Join(user.RoleIds, ","), opu.Api.StateManager.MaxAge(), opu.Api.StateManager.Path(), opu.Api.StateManager.Domain(), false, false)
-	c.SetCookie(common.UserOrgIdKey, strconv.FormatInt(user.OrgId, 10), opu.Api.StateManager.MaxAge(), opu.Api.StateManager.Path(), opu.Api.StateManager.Domain(), false, false)
+	c.SetCookie(communal.UserIdKey, strconv.FormatInt(user.Id, 10), opu.Api.StateManager.MaxAge(), opu.Api.StateManager.Path(), opu.Api.StateManager.Domain(), false, false)
+	c.SetCookie(communal.UserNicknameKey, user.Nickname, opu.Api.StateManager.MaxAge(), opu.Api.StateManager.Path(), opu.Api.StateManager.Domain(), false, false)
+	c.SetCookie(communal.UserRoleKey, strings.Join(user.RoleIds, ","), opu.Api.StateManager.MaxAge(), opu.Api.StateManager.Path(), opu.Api.StateManager.Domain(), false, false)
+	c.SetCookie(communal.UserOrgIdKey, strconv.FormatInt(user.OrgId, 10), opu.Api.StateManager.MaxAge(), opu.Api.StateManager.Path(), opu.Api.StateManager.Domain(), false, false)
 	api.SuccessWithData(c, result)
 }
 
@@ -92,7 +86,7 @@ func (api *UserAPI) Filter(c *gin.Context) {
 		api.BadRequestWithError(c, err)
 		return
 	}
-	//strOrg, _ := c.Cookie(common.UserOrgIdKey)
+	//strOrg, _ := c.Cookie(communal.UserOrgIdKey)
 	//orgid, _ := strconv.ParseInt(strOrg, 10, 64)
 	//if form.OwnerId <= 0 {
 	//	form.OwnerId = orgid
@@ -101,7 +95,7 @@ func (api *UserAPI) Filter(c *gin.Context) {
 	//	form.OrgId = orgid
 	//}
 
-	result := common.NewFilterResult(&[]model.UserDTO{})
+	result := communal.NewFilterResult(&[]model.UserDTO{})
 	err = service.User.Filter(context.Background(), form, result)
 
 	//log.Logger.Debug("list user", zap.Any("result", result))
@@ -118,7 +112,7 @@ func (api *UserAPI) UpdatePassword(c *gin.Context) {
 		api.BadRequestWithError(c, err)
 		return
 	}
-	result := &common.Result{
+	result := &communal.Result{
 		Data: &model.User{},
 	}
 	err = service.User.UpdatePassword(context.Background(), form, result)
@@ -134,7 +128,7 @@ func (api *UserAPI) ResetPassword(c *gin.Context) {
 		return
 	}
 
-	result := &common.Result{
+	result := &communal.Result{
 		Data: &model.User{},
 	}
 
@@ -151,10 +145,10 @@ func (api *UserAPI) Update(c *gin.Context) {
 		api.BadRequestWithError(c, err)
 		return
 	}
-	strOrg, _ := c.Cookie(common.UserOrgIdKey)
+	strOrg, _ := c.Cookie(communal.UserOrgIdKey)
 	orgid, _ := strconv.ParseInt(strOrg, 10, 64)
 	form.OrgId = orgid
-	result := &common.Result{}
+	result := &communal.Result{}
 	err = service.User.Update(context.Background(), form, result)
 
 	log.Logger.Debug("update user", zap.Any("result", result))
@@ -167,7 +161,7 @@ func (api *UserAPI) Delete(c *gin.Context) {
 		api.BadRequestWithError(c, err)
 		return
 	}
-	result := &common.Result{}
+	result := &communal.Result{}
 
 	err = service.User.Delete(context.Background(), id, result)
 
@@ -181,7 +175,7 @@ func (api *UserAPI) Get(c *gin.Context) {
 		api.BadRequestWithError(c, err)
 		return
 	}
-	result := &common.Result{Data: &model.UserDTO{}}
+	result := &communal.Result{Data: &model.UserDTO{}}
 	err = service.User.Get(context.Background(), &id, result)
 
 	//log.Logger.Debug("get user", zap.Any("result", result))
@@ -195,10 +189,10 @@ func (api *UserAPI) Insert(c *gin.Context) {
 		api.BadRequestWithError(c, err)
 		return
 	}
-	//strOrg, _ := c.Cookie(common.UserOrgIdKey)
+	//strOrg, _ := c.Cookie(communal.UserOrgIdKey)
 	//orgid, _ := strconv.ParseInt(strOrg, 10, 64)
 	//form.OrgId = orgid
-	result := &common.Result{}
+	result := &communal.Result{}
 	if opu.Api.Rpc {
 		err = rpc.Call(context.Background(), "OpUser", "Insert", form, result)
 		log.Logger.Error("failed to call rpc", zap.Any("error", err))
@@ -211,64 +205,64 @@ func (api *UserAPI) Insert(c *gin.Context) {
 }
 
 //发送code到邮件
-func (api *UserAPI) SenderEmail(c *gin.Context) {
-	var form = &model.ForgetForm{}
-	err := api.Bind(c, form)
-	if err != nil {
-		api.BadRequestWithError(c, err)
-		return
-	}
-
-	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
-	code := fmt.Sprintf("%06v", rnd.Int31n(1000000))
-	has := db.SetKeyWithExpireTime(opu.Service.Redis, form.Email, code, model.CaptchaTimeout)
-	if !has {
-		log.Logger.Info("redis err")
-	}
-	var msg = &senderModel.Message{
-		Type:       "email",
-		Recipient:  form.Email,
-		TemplateId: "verify-code",
-		Params:     make(map[string]interface{}),
-	}
-	msg.Params["subject"] = "Thanks for your registration"
-	msg.Params["code"] = code
-	if err := senderService.SendDenialLetter(msg); err != nil {
-		log.Logger.Error("failed to send email", zap.Any("error", err))
-		return
-	}
-	api.Success(c)
-}
+//func (api *UserAPI) SenderEmail(c *gin.Context) {
+//	var form = &model.ForgetForm{}
+//	err := api.Bind(c, form)
+//	if err != nil {
+//		api.BadRequestWithError(c, err)
+//		return
+//	}
+//
+//	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
+//	code := fmt.Sprintf("%06v", rnd.Int31n(1000000))
+//	has := db.SetKeyWithExpireTime(opu.Service.Redis, form.Email, code, model.CaptchaTimeout)
+//	if !has {
+//		log.Logger.Info("redis err")
+//	}
+//	var msg = &senderModel.Message{
+//		Type:       "email",
+//		Recipient:  form.Email,
+//		TemplateId: "verify-code",
+//		Params:     make(map[string]interface{}),
+//	}
+//	msg.Params["subject"] = "Thanks for your registration"
+//	msg.Params["code"] = code
+//	if err := senderService.SendDenialLetter(msg); err != nil {
+//		log.Logger.Error("failed to send email", zap.Any("error", err))
+//		return
+//	}
+//	api.Success(c)
+//}
 
 //验证code信心
-func (api *UserAPI) VerifyCode(c *gin.Context) {
-	var form = &model.ForgetForm{}
-	result := &common.Result{}
-	err := api.Bind(c, form)
-	if err != nil {
-		api.BadRequestWithError(c, err)
-		return
-	}
-	if form.Code != "" {
-		code, errRedis := db.RedisGet(opu.Service.Redis, form.Email)
-		if errRedis != nil {
-			log.Logger.Info("error redis")
-		}
-		if form.Code == code {
-			result.Ok = true
-			log.Logger.Info("验证通过！")
-		} else {
-			err := &errors.SimpleBizError{
-				Code: model.LOGIN_IDENTITY_INVALID,
-			}
-			result.Failure(err)
-
-			log.Logger.Info("验证失败！")
-		}
-	}
-	api.Result(c, result)
-
-}
+//func (api *UserAPI) VerifyCode(c *gin.Context) {
+//	var form = &model.ForgetForm{}
+//	result := &communal.Result{}
+//	err := api.Bind(c, form)
+//	if err != nil {
+//		api.BadRequestWithError(c, err)
+//		return
+//	}
+//	if form.Code != "" {
+//		code, errRedis := db.RedisGet(opu.Service.Redis, form.Email)
+//		if errRedis != nil {
+//			log.Logger.Info("error redis")
+//		}
+//		if form.Code == code {
+//			result.Ok = true
+//			log.Logger.Info("验证通过！")
+//		} else {
+//			err := &errors.SimpleBizError{
+//				Code: model.LOGIN_IDENTITY_INVALID,
+//			}
+//			result.Failure(err)
+//
+//			log.Logger.Info("验证失败！")
+//		}
+//	}
+//	api.Result(c, result)
+//
+//}
 func (api *UserAPI) Register(router gin.IRouter) {
 	v1 := router.Group("/v1")
 	v1.POST("/login", api.Login)
@@ -282,6 +276,6 @@ func (api *UserAPI) Register(router gin.IRouter) {
 	v1.PUT("/users", web.UserInterceptor, api.Update)
 	v1.PUT("/users/:id", web.UserInterceptor, api.Update)
 	v1.DELETE("/users/:id", web.UserInterceptor, api.Delete)
-	v1.POST("/users/senderemail", api.SenderEmail) // 邮箱验证码
-	v1.POST("/users/getverifycode", api.VerifyCode)
+	//v1.POST("/users/senderemail", api.SenderEmail) // 邮箱验证码
+	//v1.POST("/users/getverifycode", api.VerifyCode)
 }

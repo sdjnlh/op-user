@@ -3,14 +3,14 @@ package main
 import (
 	"flag"
 
-	"code.letsit.cn/go/common/app"
-	"code.letsit.cn/go/common/log"
-	"code.letsit.cn/go/common/util"
-	"code.letsit.cn/go/common/web"
-	"code.letsit.cn/go/op-user/opu"
-	userRest "code.letsit.cn/go/op-user/rest"
 	"github.com/gin-gonic/gin"
 	"github.com/json-iterator/go/extra"
+	"github.com/sdjnlh/communal/app"
+	"github.com/sdjnlh/communal/log"
+	"github.com/sdjnlh/communal/util"
+	"github.com/sdjnlh/communal/web"
+	"github.com/sdjnlh/op-user/opu"
+	userRest "github.com/sdjnlh/op-user/rest"
 )
 
 func main() {

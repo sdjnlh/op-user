@@ -7,25 +7,25 @@ import (
 	"strings"
 	"time"
 
-	"code.letsit.cn/go/common"
-	"code.letsit.cn/go/common/errors"
-	"code.letsit.cn/go/common/log"
-	"code.letsit.cn/go/common/password"
-	"code.letsit.cn/go/op-user/model"
-	"code.letsit.cn/go/op-user/model/module"
 	_ "github.com/lib/pq"
+	"github.com/sdjnlh/communal"
+	"github.com/sdjnlh/communal/errors"
+	"github.com/sdjnlh/communal/log"
+	"github.com/sdjnlh/communal/password"
+	"github.com/sdjnlh/op-user/model"
+	"github.com/sdjnlh/op-user/model/module"
 	"go.uber.org/zap"
 )
 
 type UserService struct {
-	*common.Module
+	*communal.Module
 }
 
 var User = &UserService{
 	Module: module.User,
 }
 
-func (service *UserService) Login(ctx context.Context, form *model.User, result *common.Result) error {
+func (service *UserService) Login(ctx context.Context, form *model.User, result *communal.Result) error {
 	log.Logger.Debug("user login")
 	user := result.Data.(*model.UserDTO)
 
@@ -101,7 +101,7 @@ func (service *UserService) getRoles(dto *model.UserDTO) (err error) {
 			}
 		}
 
-		permissionArray := common.StringArray(permissions)
+		permissionArray := communal.StringArray(permissions)
 		dto.Permissions = &(permissionArray)
 		dto.Roles = &roles
 	}
@@ -109,7 +109,7 @@ func (service *UserService) getRoles(dto *model.UserDTO) (err error) {
 	return nil
 }
 
-func (service *UserService) GetMe(ctx context.Context, id *int64, result *common.Result) (err error) {
+func (service *UserService) GetMe(ctx context.Context, id *int64, result *communal.Result) (err error) {
 	if *id <= 0 {
 		result.Failure(errors.InvalidParams())
 		return nil
@@ -138,7 +138,7 @@ func (service *UserService) GetMe(ctx context.Context, id *int64, result *common
 	return
 }
 
-func (service *UserService) Get(ctx context.Context, id *int64, result *common.Result) (err error) {
+func (service *UserService) Get(ctx context.Context, id *int64, result *communal.Result) (err error) {
 	if *id <= 0 {
 		result.Failure(errors.InvalidParams())
 		return nil
@@ -169,7 +169,7 @@ func (service *UserService) Get(ctx context.Context, id *int64, result *common.R
 	return
 }
 
-func (service *UserService) Filter(ctx context.Context, filter *model.UserFilter, result *common.FilterResult) (err error) {
+func (service *UserService) Filter(ctx context.Context, filter *model.UserFilter, result *communal.FilterResult) (err error) {
 	var users []model.UserDTO
 	ss := service.Db.Where("dtd = false")
 	if filter.Keyword != "" {
@@ -180,7 +180,7 @@ func (service *UserService) Filter(ctx context.Context, filter *model.UserFilter
 	}
 
 	if len(filter.Roles) > 0 {
-		roles := common.StringArray(filter.Roles)
+		roles := communal.StringArray(filter.Roles)
 		bts, err := (&roles).ToDB()
 		if err != nil {
 			return err
@@ -258,7 +258,7 @@ func (service *UserService) Filter(ctx context.Context, filter *model.UserFilter
 	return
 }
 
-func (service *UserService) Insert(ctx context.Context, form *model.UserDTO, result *common.Result) error {
+func (service *UserService) Insert(ctx context.Context, form *model.UserDTO, result *communal.Result) error {
 	if form.Password == "" {
 		result.Failure(&errors.SimpleBizError{
 			Code: model.AUTH_PASSWORD_INVALID,
@@ -286,7 +286,7 @@ func (service *UserService) Insert(ctx context.Context, form *model.UserDTO, res
 	return nil
 }
 
-func (service *UserService) Update(ctx context.Context, form *model.UserDTO, result *common.Result) error {
+func (service *UserService) Update(ctx context.Context, form *model.UserDTO, result *communal.Result) error {
 	if form.Id <= 0 {
 		result.Failure(errors.InvalidParams().AddError(errors.InvalidField("id", errors.FIELD_BAD_FORMAT, "")))
 		return nil
@@ -305,7 +305,7 @@ func (service *UserService) Update(ctx context.Context, form *model.UserDTO, res
 	return nil
 }
 
-func (service *UserService) Delete(ctx context.Context, id int64, result *common.Result) error {
+func (service *UserService) Delete(ctx context.Context, id int64, result *communal.Result) error {
 	if id < 1 {
 		result.Failure(errors.NotFound())
 		return nil
@@ -321,7 +321,7 @@ func (service *UserService) Delete(ctx context.Context, id int64, result *common
 	return nil
 }
 
-func (service *UserService) ResetPassword(ctx context.Context, form *model.User, result *common.Result) error {
+func (service *UserService) ResetPassword(ctx context.Context, form *model.User, result *communal.Result) error {
 	if form.Id < 1 || form.Password == "" {
 		result.Failure(errors.NotFound())
 		return nil
@@ -336,7 +336,7 @@ func (service *UserService) ResetPassword(ctx context.Context, form *model.User,
 	return nil
 }
 
-func (service *UserService) UpdatePassword(ctx context.Context, form *model.RestPassword, result *common.Result) error {
+func (service *UserService) UpdatePassword(ctx context.Context, form *model.RestPassword, result *communal.Result) error {
 	log.Logger.Debug("update password")
 	user := result.Data.(*model.User)
 	userId := form.Id

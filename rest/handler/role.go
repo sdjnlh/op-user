@@ -4,12 +4,12 @@ import (
 	"context"
 	"strconv"
 
-	"code.letsit.cn/go/common"
-	"code.letsit.cn/go/common/log"
-	"code.letsit.cn/go/common/web"
-	"code.letsit.cn/go/op-user/model"
-	"code.letsit.cn/go/op-user/service"
 	"github.com/gin-gonic/gin"
+	"github.com/sdjnlh/communal"
+	"github.com/sdjnlh/communal/log"
+	"github.com/sdjnlh/communal/web"
+	"github.com/sdjnlh/op-user/model"
+	"github.com/sdjnlh/op-user/service"
 	"go.uber.org/zap"
 )
 
@@ -30,10 +30,10 @@ func (api *RoleAPI) Filter(c *gin.Context) {
 		api.BadRequestWithError(c, err)
 		return
 	}
-	strOrg, _ := c.Cookie(common.UserOrgIdKey)
+	strOrg, _ := c.Cookie(communal.UserOrgIdKey)
 	orgid, _ := strconv.ParseInt(strOrg, 10, 64)
 	form.OwnerId = orgid
-	result := &common.FilterResult{Result: common.Result{Data: &[]model.Role{}}}
+	result := &communal.FilterResult{Result: communal.Result{Data: &[]model.Role{}}}
 	err = service.Role.Filter(context.Background(), form, result)
 	log.Logger.Debug("list role", zap.Any("result", result))
 	api.ResultWithError(c, result, err)
@@ -48,7 +48,7 @@ func (api *RoleAPI) Get(c *gin.Context) {
 		return
 	}
 	var err error
-	result := &common.Result{Data: &model.RoleDTO{}}
+	result := &communal.Result{Data: &model.RoleDTO{}}
 	err = service.Role.Get(context.Background(), &id, result)
 	log.Logger.Debug("get role", zap.Any("result", result))
 	api.ResultWithError(c, result, err)
@@ -62,10 +62,10 @@ func (api *RoleAPI) Insert(c *gin.Context) {
 		api.BadRequestWithError(c, err)
 		return
 	}
-	strOrg, _ := c.Cookie(common.UserOrgIdKey)
+	strOrg, _ := c.Cookie(communal.UserOrgIdKey)
 	orgid, _ := strconv.ParseInt(strOrg, 10, 64)
 	form.OwnerId = orgid
-	result := &common.Result{Data: &model.Role{}}
+	result := &communal.Result{Data: &model.Role{}}
 	err = service.Role.Insert(context.Background(), form, result)
 
 	log.Logger.Debug("create role", zap.Any("result", result))
@@ -84,7 +84,7 @@ func (api *RoleAPI) Update(c *gin.Context) {
 	}
 
 	log.Logger.Debug("update role", zap.Any(" form:", form))
-	result := &common.Result{Data: &model.Role{}}
+	result := &communal.Result{Data: &model.Role{}}
 	err = service.Role.Update(context.Background(), form, result)
 
 	log.Logger.Debug("update role", zap.Any("result", result))
@@ -95,7 +95,7 @@ func (api *RoleAPI) Delete(c *gin.Context) {
 	id := c.Param("id")
 
 	var err error
-	result := &common.Result{Data: &model.Role{}}
+	result := &communal.Result{Data: &model.Role{}}
 
 	err = service.Role.Delete(context.Background(), id, result)
 	if err != nil {

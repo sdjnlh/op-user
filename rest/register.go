@@ -1,8 +1,8 @@
 package rest
 
 import (
-	"code.letsit.cn/go/op-user/rest/handler"
 	"github.com/gin-gonic/gin"
+	"github.com/sdjnlh/op-user/rest/handler"
 )
 
 func RegisterAPIs(router gin.IRouter) {

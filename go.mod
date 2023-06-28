@@ -1,4 +1,4 @@
-module code.letsit.cn/go/op-user
+module github.com/sdjnlh/op-user
 
 replace (
 	#labix.org/v2/mgo => gopkg.in/mgo.v2 v2.0.0-20180705113604-9856a29383ce
@@ -16,13 +16,12 @@ replace (
 )
 
 require (
-	code.letsit.cn/go/common v1.2.8
-	code.letsit.cn/go/sender v0.0.0-20200722001048-7e345a02a162
-	github.com/gin-gonic/gin v1.6.3
+	github.com/gin-gonic/gin v1.7.7
 	github.com/go-xorm/builder v0.3.4
 	github.com/json-iterator/go v1.1.10
 	github.com/lib/pq v1.7.0
 	github.com/muesli/cache2go v0.0.0-20200423001931-a100c5aac93f
+	github.com/sdjnlh/communal v0.0.0-20230628013018-ffa0b1677e0b
 	go.uber.org/zap v1.15.0
 	xorm.io/xorm v1.0.3
 )
