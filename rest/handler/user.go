@@ -1,13 +1,20 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/sdjnlh/communal"
+	"github.com/sdjnlh/communal/db"
+	"github.com/sdjnlh/communal/errors"
 	"github.com/sdjnlh/communal/log"
 	"github.com/sdjnlh/communal/rpc"
 	"github.com/sdjnlh/communal/web"
 	"github.com/sdjnlh/op-user/model"
 	"github.com/sdjnlh/op-user/opu"
 	"github.com/sdjnlh/op-user/service"
+	senderModel "github.com/sdjnlh/sender/model"
+	senderService "github.com/sdjnlh/sender/service"
+	"math/rand"
+	"time"
 
 	"context"
 	"github.com/gin-gonic/gin"
@@ -205,64 +212,64 @@ func (api *UserAPI) Insert(c *gin.Context) {
 }
 
 //发送code到邮件
-//func (api *UserAPI) SenderEmail(c *gin.Context) {
-//	var form = &model.ForgetForm{}
-//	err := api.Bind(c, form)
-//	if err != nil {
-//		api.BadRequestWithError(c, err)
-//		return
-//	}
-//
-//	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
-//	code := fmt.Sprintf("%06v", rnd.Int31n(1000000))
-//	has := db.SetKeyWithExpireTime(opu.Service.Redis, form.Email, code, model.CaptchaTimeout)
-//	if !has {
-//		log.Logger.Info("redis err")
-//	}
-//	var msg = &senderModel.Message{
-//		Type:       "email",
-//		Recipient:  form.Email,
-//		TemplateId: "verify-code",
-//		Params:     make(map[string]interface{}),
-//	}
-//	msg.Params["subject"] = "Thanks for your registration"
-//	msg.Params["code"] = code
-//	if err := senderService.SendDenialLetter(msg); err != nil {
-//		log.Logger.Error("failed to send email", zap.Any("error", err))
-//		return
-//	}
-//	api.Success(c)
-//}
+func (api *UserAPI) SenderEmail(c *gin.Context) {
+	var form = &model.ForgetForm{}
+	err := api.Bind(c, form)
+	if err != nil {
+		api.BadRequestWithError(c, err)
+		return
+	}
+
+	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
+	code := fmt.Sprintf("%06v", rnd.Int31n(1000000))
+	has := db.SetKeyWithExpireTime(opu.Service.Redis, form.Email, code, model.CaptchaTimeout)
+	if !has {
+		log.Logger.Info("redis err")
+	}
+	var msg = &senderModel.Message{
+		Type:       "email",
+		Recipient:  form.Email,
+		TemplateId: "verify-code",
+		Params:     make(map[string]interface{}),
+	}
+	msg.Params["subject"] = "Thanks for your registration"
+	msg.Params["code"] = code
+	if err := senderService.SendDenialLetter(msg); err != nil {
+		log.Logger.Error("failed to send email", zap.Any("error", err))
+		return
+	}
+	api.Success(c)
+}
 
 //验证code信心
-//func (api *UserAPI) VerifyCode(c *gin.Context) {
-//	var form = &model.ForgetForm{}
-//	result := &communal.Result{}
-//	err := api.Bind(c, form)
-//	if err != nil {
-//		api.BadRequestWithError(c, err)
-//		return
-//	}
-//	if form.Code != "" {
-//		code, errRedis := db.RedisGet(opu.Service.Redis, form.Email)
-//		if errRedis != nil {
-//			log.Logger.Info("error redis")
-//		}
-//		if form.Code == code {
-//			result.Ok = true
-//			log.Logger.Info("验证通过！")
-//		} else {
-//			err := &errors.SimpleBizError{
-//				Code: model.LOGIN_IDENTITY_INVALID,
-//			}
-//			result.Failure(err)
-//
-//			log.Logger.Info("验证失败！")
-//		}
-//	}
-//	api.Result(c, result)
-//
-//}
+func (api *UserAPI) VerifyCode(c *gin.Context) {
+	var form = &model.ForgetForm{}
+	result := &communal.Result{}
+	err := api.Bind(c, form)
+	if err != nil {
+		api.BadRequestWithError(c, err)
+		return
+	}
+	if form.Code != "" {
+		code, errRedis := db.RedisGet(opu.Service.Redis, form.Email)
+		if errRedis != nil {
+			log.Logger.Info("error redis")
+		}
+		if form.Code == code {
+			result.Ok = true
+			log.Logger.Info("验证通过！")
+		} else {
+			err := &errors.SimpleBizError{
+				Code: model.LOGIN_IDENTITY_INVALID,
+			}
+			result.Failure(err)
+
+			log.Logger.Info("验证失败！")
+		}
+	}
+	api.Result(c, result)
+
+}
 func (api *UserAPI) Register(router gin.IRouter) {
 	v1 := router.Group("/v1")
 	v1.POST("/login", api.Login)
@@ -276,6 +283,6 @@ func (api *UserAPI) Register(router gin.IRouter) {
 	v1.PUT("/users", web.UserInterceptor, api.Update)
 	v1.PUT("/users/:id", web.UserInterceptor, api.Update)
 	v1.DELETE("/users/:id", web.UserInterceptor, api.Delete)
-	//v1.POST("/users/senderemail", api.SenderEmail) // 邮箱验证码
-	//v1.POST("/users/getverifycode", api.VerifyCode)
+	v1.POST("/users/senderemail", api.SenderEmail) // 邮箱验证码
+	v1.POST("/users/getverifycode", api.VerifyCode)
 }

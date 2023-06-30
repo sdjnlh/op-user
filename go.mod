@@ -21,7 +21,8 @@ require (
 	github.com/json-iterator/go v1.1.10
 	github.com/lib/pq v1.7.0
 	github.com/muesli/cache2go v0.0.0-20200423001931-a100c5aac93f
-	github.com/sdjnlh/communal v0.0.0-20230628013018-ffa0b1677e0b
+	github.com/sdjnlh/communal v0.0.0-20230629010746-d3b14e341e70
+	github.com/sdjnlh/sender v0.0.0-20230630065509-986996a0f460
 	go.uber.org/zap v1.15.0
 	xorm.io/xorm v1.0.3
 )
